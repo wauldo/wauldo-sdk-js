@@ -1,0 +1,63 @@
+{
+  "name": "wauldo",
+  "version": "0.1.1",
+  "description": "Official TypeScript SDK for Wauldo — Verified AI answers from your documents",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsup src/index.ts --format cjs,esm --dts --clean",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "eslint src --ext .ts",
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "ai",
+    "llm",
+    "openai",
+    "privacy",
+    "gdpr",
+    "chatgpt",
+    "rapidapi",
+    "api",
+    "typescript",
+    "agent",
+    "nlp",
+    "machine-learning"
+  ],
+  "author": "Wauldo Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/wauldo/wauldo-sdk-js"
+  },
+  "bugs": {
+    "url": "https://github.com/wauldo/wauldo-sdk-js/issues"
+  },
+  "homepage": "https://wauldo.com",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "@typescript-eslint/eslint-plugin": "^6.13.0",
+    "@typescript-eslint/parser": "^6.13.0",
+    "eslint": "^8.55.0",
+    "tsup": "^8.0.0",
+    "typescript": "^5.3.0",
+    "vitest": "^2.1.0"
+  }
+}
