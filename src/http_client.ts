@@ -12,6 +12,8 @@ import type {
   EmbeddingResponse,
   HttpClientConfig,
   ModelList,
+  FactCheckRequest,
+  FactCheckResponse,
   OrchestratorResponse,
   RagQueryResponse,
   RagUploadResponse,
@@ -220,5 +222,30 @@ export class HttpClient {
       this.retryConfig, 'POST', '/v1/orchestrator/parallel', { prompt },
     );
     return validateResponse<OrchestratorResponse>(data, 'OrchestratorResponse');
+  }
+
+  // ── Fact-Check endpoints ──────────────────────────────────────────────
+
+  /**
+   * POST /v1/fact-check — Verify claims against source context.
+   *
+   * @param request - Text and source context to verify
+   * @returns FactCheckResponse with verdict, action, and per-claim results
+   *
+   * @example
+   * ```typescript
+   * const result = await client.factCheck({
+   *   text: 'Returns accepted within 60 days.',
+   *   source_context: 'Our policy allows returns within 14 days.',
+   *   mode: 'lexical',
+   * });
+   * console.log(result.verdict); // "rejected"
+   * ```
+   */
+  async factCheck(request: FactCheckRequest): Promise<FactCheckResponse> {
+    const data = await fetchWithRetry<FactCheckResponse>(
+      this.retryConfig, 'POST', '/v1/fact-check', request,
+    );
+    return validateResponse<FactCheckResponse>(data, 'FactCheckResponse');
   }
 }

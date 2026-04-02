@@ -93,6 +93,19 @@ const reply = await conv.say('What are generics?');
 const followUp = await conv.say('Give me an example');
 ```
 
+### Fact-Check — Verify Claims
+
+```typescript
+const result = await client.factCheck({
+  text: 'Returns are accepted within 60 days.',
+  source_context: 'Our policy allows returns within 14 days.',
+  mode: 'lexical',
+});
+console.log(result.verdict); // "rejected"
+console.log(result.action);  // "block"
+result.claims.forEach(c => console.log(`${c.text} → ${c.verdict} (${c.reason})`));
+```
+
 ## Error Handling
 
 ```typescript

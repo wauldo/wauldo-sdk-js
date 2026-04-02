@@ -127,6 +127,39 @@ export interface OrchestratorResponse {
   final_output: string;
 }
 
+// ── Fact-Check ─────────────────────────────────────────────────────────
+
+export interface FactCheckRequest {
+  text: string;
+  source_context: string;
+  mode?: 'lexical' | 'hybrid' | 'semantic';
+}
+
+export interface ClaimResult {
+  text: string;
+  claim_type: string;
+  supported: boolean;
+  confidence: number;
+  confidence_label: string;
+  verdict: string;
+  action: string;
+  reason?: string | null;
+  evidence?: string | null;
+}
+
+export interface FactCheckResponse {
+  verdict: string;
+  action: string;
+  hallucination_rate: number;
+  mode: string;
+  total_claims: number;
+  supported_claims: number;
+  confidence: number;
+  claims: ClaimResult[];
+  mode_warning?: string | null;
+  processing_time_ms: number;
+}
+
 // ── Chat Client Interface ───────────────────────────────────────────────
 
 /** Minimal interface required by Conversation — implemented by both HttpClient and MockHttpClient */
