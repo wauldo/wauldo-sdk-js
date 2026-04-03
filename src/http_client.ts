@@ -14,6 +14,8 @@ import type {
   ModelList,
   FactCheckRequest,
   FactCheckResponse,
+  VerifyCitationRequest,
+  VerifyCitationResponse,
   OrchestratorResponse,
   RagQueryResponse,
   RagUploadResponse,
@@ -247,5 +249,24 @@ export class HttpClient {
       this.retryConfig, 'POST', '/v1/fact-check', request,
     );
     return validateResponse<FactCheckResponse>(data, 'FactCheckResponse');
+  }
+
+  /**
+   * POST /v1/verify — Verify citations in AI-generated text.
+   *
+   * @example
+   * ```ts
+   * const result = await client.verifyCitation({
+   *   text: 'Rust was released in 2010 [Source: rust_book].',
+   *   sources: [{ name: 'rust_book', content: 'Rust was first released in 2010.' }],
+   * });
+   * console.log(result.phantom_count); // 0
+   * ```
+   */
+  async verifyCitation(request: VerifyCitationRequest): Promise<VerifyCitationResponse> {
+    const data = await fetchWithRetry<VerifyCitationResponse>(
+      this.retryConfig, 'POST', '/v1/verify', request,
+    );
+    return validateResponse<VerifyCitationResponse>(data, 'VerifyCitationResponse');
   }
 }

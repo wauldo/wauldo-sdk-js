@@ -160,6 +160,36 @@ export interface FactCheckResponse {
   processing_time_ms: number;
 }
 
+// ── Citation Verify ────────────────────────────────────────────────────
+
+export interface SourceChunk {
+  name: string;
+  content: string;
+}
+
+export interface CitationDetail {
+  citation: string;
+  source_name: string;
+  is_valid: boolean;
+}
+
+export interface VerifyCitationRequest {
+  text: string;
+  sources?: SourceChunk[];
+  threshold?: number;
+}
+
+export interface VerifyCitationResponse {
+  citation_ratio: number;
+  has_sufficient_citations: boolean;
+  sentence_count: number;
+  citation_count: number;
+  uncited_sentences: string[];
+  citations?: CitationDetail[];
+  phantom_count?: number;
+  processing_time_ms: number;
+}
+
 // ── Chat Client Interface ───────────────────────────────────────────────
 
 /** Minimal interface required by Conversation — implemented by both HttpClient and MockHttpClient */
