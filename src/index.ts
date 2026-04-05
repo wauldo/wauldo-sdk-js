@@ -85,4 +85,7 @@ export type {
   LogLevel,
   RequestOptions,
   ChatClientLike,
+  InsightsResponse,
+  AnalyticsResponse,
+  TrafficSummary,
 } from './http_types.js';

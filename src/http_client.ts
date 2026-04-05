@@ -21,6 +21,9 @@ import type {
   RagUploadResponse,
   UploadFileResponse,
   RequestOptions,
+  InsightsResponse,
+  AnalyticsResponse,
+  TrafficSummary,
 } from './http_types.js';
 import { fetchWithRetry, type RetryConfig } from './retry_fetch.js';
 import { parseSSEStream } from './sse_parser.js';
@@ -317,5 +320,37 @@ export class HttpClient {
       this.retryConfig, 'POST', '/v1/verify', request,
     );
     return validateResponse<VerifyCitationResponse>(data, 'VerifyCitationResponse');
+  }
+
+  // ── Analytics & Insights endpoints ───────────────────────────────────
+
+  /**
+   * GET /v1/insights — ROI metrics for your API key
+   */
+  async getInsights(): Promise<InsightsResponse> {
+    const data = await fetchWithRetry<InsightsResponse>(
+      this.retryConfig, 'GET', '/v1/insights',
+    );
+    return validateResponse<InsightsResponse>(data, 'InsightsResponse');
+  }
+
+  /**
+   * GET /v1/analytics — Usage analytics and cache performance
+   */
+  async getAnalytics(minutes: number = 60): Promise<AnalyticsResponse> {
+    const data = await fetchWithRetry<AnalyticsResponse>(
+      this.retryConfig, 'GET', `/v1/analytics?minutes=${minutes}`,
+    );
+    return validateResponse<AnalyticsResponse>(data, 'AnalyticsResponse');
+  }
+
+  /**
+   * GET /v1/analytics/traffic — Per-tenant traffic monitoring
+   */
+  async getAnalyticsTraffic(): Promise<TrafficSummary> {
+    const data = await fetchWithRetry<TrafficSummary>(
+      this.retryConfig, 'GET', '/v1/analytics/traffic',
+    );
+    return validateResponse<TrafficSummary>(data, 'TrafficSummary');
   }
 }

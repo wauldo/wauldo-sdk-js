@@ -208,6 +208,56 @@ export interface VerifyCitationResponse {
   processing_time_ms: number;
 }
 
+// ── Analytics & Insights ───────────────────────────────────────────────
+
+export interface InsightsResponse {
+  tig_key: string;
+  total_requests: number;
+  intelligence_requests: number;
+  fallback_requests: number;
+  tokens: {
+    baseline_total: number;
+    real_total: number;
+    saved_total: number;
+    saved_percent_avg: number;
+  };
+  cost: {
+    estimated_usd_saved: number;
+  };
+}
+
+export interface AnalyticsResponse {
+  cache: {
+    total_requests: number;
+    cache_hit_rate: number;
+    avg_latency_ms: number;
+    p95_latency_ms: number;
+  };
+  tokens: {
+    total_baseline: number;
+    total_real: number;
+    total_saved: number;
+    avg_savings_percent: number;
+  };
+  uptime_secs: number;
+}
+
+export interface TrafficSummary {
+  total_requests_today: number;
+  total_tokens_today: number;
+  top_tenants: Array<{
+    tenant_id: string;
+    requests_today: number;
+    tokens_used: number;
+    success_rate: number;
+    avg_latency_ms: number;
+  }>;
+  error_rate: number;
+  avg_latency_ms: number;
+  p95_latency_ms: number;
+  uptime_secs: number;
+}
+
 // ── Chat Client Interface ───────────────────────────────────────────────
 
 /** Minimal interface required by Conversation — implemented by both HttpClient and MockHttpClient */

@@ -150,6 +150,7 @@ const followUp = await conv.say('Give me an example');
 - **Pre-generation fact extraction** — numbers, dates, limits injected as constraints
 - **Post-generation grounding check** — every answer verified against sources
 - **Citation validation** — detects phantom references
+- **Analytics & Insights** — track token savings, cache performance, cost per hour, and per-tenant traffic
 - **Fact-check API** — verify any claim against any source (3 modes)
 - **Native PDF/DOCX upload** — server-side extraction with quality scoring
 - **Smart model routing** — auto-selects cheapest model that meets quality
