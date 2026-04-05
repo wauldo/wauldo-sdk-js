@@ -1,82 +1,129 @@
-# Wauldo TypeScript SDK
+<h1 align="center">Wauldo TypeScript SDK</h1>
 
-[![npm](https://img.shields.io/npm/v/wauldo.svg)](https://npmjs.com/package/wauldo)
-[![Downloads](https://img.shields.io/npm/dm/wauldo.svg)](https://npmjs.com/package/wauldo)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-blue.svg)](https://www.typescriptlang.org/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](./LICENSE)
+<p align="center">
+  <strong>Verified AI answers from your documents — or no answer at all.</strong>
+</p>
 
-> **Verified AI answers from your documents.** Every response includes source citations, confidence scores, and an audit trail — or we don't answer at all.
+<p align="center">
+  Most RAG APIs guess. Wauldo verifies.
+</p>
 
-Official TypeScript SDK for the [Wauldo API](https://wauldo.com) — the AI inference layer with smart model routing, zero hallucinations, and standalone fact-checking.
+<p align="center">
+  <b>0% hallucination</b> &nbsp;|&nbsp; 83% accuracy &nbsp;|&nbsp; 61 eval tasks &nbsp;|&nbsp; 14 LLMs tested
+</p>
 
-## Why Wauldo?
+<p align="center">
+  <a href="https://npmjs.com/package/wauldo"><img src="https://img.shields.io/npm/v/wauldo.svg" alt="npm" /></a>&nbsp;
+  <a href="https://npmjs.com/package/wauldo"><img src="https://img.shields.io/npm/dm/wauldo.svg" alt="Downloads" /></a>&nbsp;
+  <img src="https://img.shields.io/badge/TypeScript-5.0+-blue.svg" alt="TypeScript" />&nbsp;
+  <img src="https://img.shields.io/badge/License-MIT-green.svg" alt="MIT" />
+</p>
 
-- **Native PDF & DOCX Upload** — upload files directly, server-side text extraction with document quality scoring
-- **Citation Verify API** — detect uncited sentences, phantom citations, and measure coverage ratio. No LLM needed
-- **Fact-Check API** — verify any claim against source with 3 modes (lexical, hybrid, semantic). Get verdict, action, and structured reason
-- **Zero hallucinations** — every answer is verified against source documents
-- **Smart model routing** — auto-selects the cheapest model that meets quality (save 40-80% on AI costs)
-- **One API, 7+ providers** — OpenAI, Anthropic, Google, Qwen, Meta, Mistral, DeepSeek with automatic fallback
-- **OpenAI-compatible** — swap your `baseUrl`, keep your existing code
-- **Full audit trail** — confidence score, grounded status, model used, latency on every response
-- **Zero dependencies** — uses Node 18+ built-in APIs (fetch, ReadableStream)
+<p align="center">
+  <a href="https://wauldo.com/demo">Demo</a> &bull;
+  <a href="https://wauldo.com/docs">Docs</a> &bull;
+  <a href="https://rapidapi.com/binnewzzin/api/smart-rag-api">Free API Key</a> &bull;
+  <a href="https://dev.to/wauldo/how-we-achieved-0-hallucination-rate-in-our-rag-api-with-benchmarks-4g54">Benchmarks</a>
+</p>
 
-## Quick Start
+---
 
-```typescript
-import { HttpClient } from 'wauldo';
-
-const client = new HttpClient({ baseUrl: 'https://api.wauldo.com', apiKey: 'YOUR_API_KEY' });
-
-const reply = await client.chatSimple('auto', 'What is TypeScript?');
-console.log(reply);
-```
-
-## Installation
+## Quickstart (30 seconds)
 
 ```bash
 npm install wauldo
 ```
 
-**Requirements:** Node.js 18+, TypeScript 5.0+
-
-## Features
-
-### Chat Completions
-
 ```typescript
 import { HttpClient } from 'wauldo';
 
 const client = new HttpClient({ baseUrl: 'https://api.wauldo.com', apiKey: 'YOUR_API_KEY' });
 
-const response = await client.chat({
-  model: 'auto',
-  messages: [
-    { role: 'system', content: 'You are a helpful assistant.' },
-    { role: 'user', content: 'Explain async/await in TypeScript' },
-  ],
-});
-console.log(response.choices[0]?.message?.content);
+// Upload a document
+await client.ragUpload('Our refund policy allows returns within 60 days...', 'policy.txt');
+
+// Ask a question — answer is verified against the source
+const result = await client.ragQuery('What is the refund policy?');
+console.log(result.answer);
+console.log(result.sources);
 ```
 
-### RAG — Upload & Query
+```
+Output:
+Answer: Returns are accepted within 60 days of purchase.
+Sources: policy.txt — "Our refund policy allows returns within 60 days"
+Grounded: true | Confidence: 0.92
+```
+
+[Try the demo](https://wauldo.com/demo) | [Get a free API key](https://rapidapi.com/binnewzzin/api/smart-rag-api)
+
+---
+
+## Why Wauldo (and not standard RAG)
+
+**Typical RAG pipeline**
+
+```
+retrieve → generate → hope it's correct
+```
+
+**Wauldo pipeline**
+
+```
+retrieve → extract facts → generate → verify → return or refuse
+```
+
+If the answer can't be verified, it returns **"insufficient evidence"** instead of guessing.
+
+### See the difference
+
+```
+Document: "Refunds are processed within 60 days"
+
+Typical RAG:  "Refunds are processed within 30 days"     ← wrong
+Wauldo:       "Refunds are processed within 60 days"     ← verified
+              or "insufficient evidence" if unclear       ← safe
+```
+
+---
+
+## Examples
+
+### Upload a PDF and ask questions
 
 ```typescript
-// Upload a document
-const upload = await client.ragUpload('Contract text here...', 'contract.txt');
-console.log(`Indexed ${upload.chunks_count} chunks`);
+// Upload — text extraction + quality scoring happens server-side
+const upload = await client.uploadFile(filePath, { title: 'Q3 Contract' });
+console.log(`Extracted ${upload.chunks_count} chunks, quality: ${upload.quality_label}`);
 
-// Query with verified answer
+// Query
 const result = await client.ragQuery('What are the payment terms?');
 console.log(`Answer: ${result.answer}`);
 console.log(`Confidence: ${Math.round(result.audit.confidence * 100)}%`);
 console.log(`Grounded: ${result.audit.grounded}`);
-for (const source of result.sources) {
-  console.log(`  Source (${Math.round(source.score * 100)}%): ${source.content}`);
-}
 ```
 
-### Streaming (SSE)
+### Fact-check any LLM output
+
+```typescript
+const result = await client.factCheck({
+  text: 'Returns are accepted within 60 days.',
+  sourceContext: 'Our policy allows returns within 14 days.',
+  mode: 'lexical',
+});
+console.log(result.verdict);          // "rejected"
+console.log(result.action);           // "block"
+console.log(result.claims[0].reason); // "numerical_mismatch"
+```
+
+### Chat (OpenAI-compatible)
+
+```typescript
+const reply = await client.chatSimple('auto', 'Explain async/await in TypeScript');
+console.log(reply);
+```
+
+### Streaming
 
 ```typescript
 const stream = client.chatStream({
@@ -88,7 +135,7 @@ for await (const chunk of stream) {
 }
 ```
 
-### Conversation Helper
+### Conversation
 
 ```typescript
 const conv = client.conversation({ system: 'You are an expert on TypeScript.', model: 'auto' });
@@ -96,18 +143,20 @@ const reply = await conv.say('What are generics?');
 const followUp = await conv.say('Give me an example');
 ```
 
-### Fact-Check — Verify Claims
+---
 
-```typescript
-const result = await client.factCheck({
-  text: 'Returns are accepted within 60 days.',
-  source_context: 'Our policy allows returns within 14 days.',
-  mode: 'lexical',
-});
-console.log(result.verdict); // "rejected"
-console.log(result.action);  // "block"
-result.claims.forEach(c => console.log(`${c.text} → ${c.verdict} (${c.reason})`));
-```
+## Features
+
+- **Pre-generation fact extraction** — numbers, dates, limits injected as constraints
+- **Post-generation grounding check** — every answer verified against sources
+- **Citation validation** — detects phantom references
+- **Fact-check API** — verify any claim against any source (3 modes)
+- **Native PDF/DOCX upload** — server-side extraction with quality scoring
+- **Smart model routing** — auto-selects cheapest model that meets quality
+- **OpenAI-compatible** — swap your `baseUrl`, keep your existing code
+- **Zero dependencies** — uses Node 18+ built-in APIs (fetch, ReadableStream)
+
+---
 
 ## Error Handling
 
@@ -115,18 +164,15 @@ result.claims.forEach(c => console.log(`${c.text} → ${c.verdict} (${c.reason})
 import { HttpClient, ServerError } from 'wauldo';
 
 try {
-  const response = await client.chat({
-    model: 'auto',
-    messages: [{ role: 'user', content: 'Hello' }],
-  });
+  const response = await client.chat({ model: 'auto', messages: [{ role: 'user', content: 'Hello' }] });
 } catch (error) {
   if (error instanceof ServerError) {
     console.error(`Server error [${error.code}]: ${error.message}`);
-  } else {
-    console.error('Unknown error:', error);
   }
 }
 ```
+
+---
 
 ## RapidAPI
 
@@ -140,19 +186,15 @@ const client = new HttpClient({
 });
 ```
 
-Get your free API key (300 req/month): [RapidAPI](https://rapidapi.com/binnewzzin/api/smart-rag-api)
+Free tier (300 req/month): [RapidAPI](https://rapidapi.com/binnewzzin/api/smart-rag-api)
 
-## Links
+---
 
-- [Website](https://wauldo.com)
-- [Documentation](https://wauldo.com/docs)
-- [Live Demo](https://api.wauldo.com/demo)
-- [Cost Calculator](https://wauldo.com/calculator)
-- [Status](https://wauldo.com/status)
+[Website](https://wauldo.com) | [Docs](https://wauldo.com/docs) | [Demo](https://wauldo.com/demo) | [Benchmarks](https://dev.to/wauldo/how-we-achieved-0-hallucination-rate-in-our-rag-api-with-benchmarks-4g54)
 
 ## Contributing
 
-Found a bug? Have a feature request? [Open an issue](https://github.com/wauldo/wauldo-sdk-js/issues).
+PRs welcome. Check the [good first issues](https://github.com/wauldo/wauldo-sdk-js/labels/good%20first%20issue).
 
 ## License
 
