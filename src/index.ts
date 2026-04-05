@@ -68,6 +68,8 @@ export type {
   EmbeddingUsage,
   EmbeddingResponse,
   RagUploadResponse,
+  UploadFileResponse,
+  DocumentQuality,
   RagSource,
   RagAuditInfo,
   RagQueryResponse,

@@ -19,10 +19,20 @@ import type {
   OrchestratorResponse,
   RagQueryResponse,
   RagUploadResponse,
+  UploadFileResponse,
   RequestOptions,
 } from './http_types.js';
 import { fetchWithRetry, type RetryConfig } from './retry_fetch.js';
 import { parseSSEStream } from './sse_parser.js';
+
+/** Concatenate multiple Uint8Array into one */
+function concatUint8Arrays(arrays: Uint8Array[]): Uint8Array {
+  const total = arrays.reduce((n, a) => n + a.length, 0);
+  const result = new Uint8Array(total);
+  let offset = 0;
+  for (const a of arrays) { result.set(a, offset); offset += a.length; }
+  return result;
+}
 
 /** Validate that a parsed response is non-null before returning it. */
 function validateResponse<T>(data: unknown, typeName: string): T {
@@ -159,6 +169,45 @@ export class HttpClient {
       this.retryConfig, 'POST', '/v1/upload', body, options?.timeoutMs,
     );
     return validateResponse<RagUploadResponse>(data, 'RagUploadResponse');
+  }
+
+  /**
+   * POST /v1/upload-file — Upload a file (PDF, DOCX, text, image) for RAG indexing.
+   *
+   * @param file - File content as Buffer/Uint8Array
+   * @param filename - The filename (determines content type detection)
+   * @param options - Optional title, tags, timeoutMs
+   * @returns Upload confirmation with quality scoring
+   */
+  async uploadFile(
+    file: Uint8Array | Buffer,
+    filename: string,
+    options?: { title?: string; tags?: string; timeoutMs?: number },
+  ): Promise<UploadFileResponse> {
+    const boundary = '----WauldoSDKBoundary';
+    const parts: Uint8Array[] = [];
+    const enc = new TextEncoder();
+
+    // File part
+    parts.push(enc.encode(`--${boundary}\r\nContent-Disposition: form-data; name="file"; filename="${filename}"\r\nContent-Type: application/octet-stream\r\n\r\n`));
+    parts.push(file instanceof Uint8Array ? file : new Uint8Array(file));
+    parts.push(enc.encode('\r\n'));
+
+    // Optional fields
+    if (options?.title) {
+      parts.push(enc.encode(`--${boundary}\r\nContent-Disposition: form-data; name="title"\r\n\r\n${options.title}\r\n`));
+    }
+    if (options?.tags) {
+      parts.push(enc.encode(`--${boundary}\r\nContent-Disposition: form-data; name="tags"\r\n\r\n${options.tags}\r\n`));
+    }
+    parts.push(enc.encode(`--${boundary}--\r\n`));
+
+    const body = concatUint8Arrays(parts);
+    const data = await fetchWithRetry<UploadFileResponse>(
+      { ...this.retryConfig, headers: { ...this.retryConfig.headers, 'Content-Type': `multipart/form-data; boundary=${boundary}` } },
+      'POST', '/v1/upload-file', body as unknown as Record<string, unknown>, options?.timeoutMs,
+    );
+    return validateResponse<UploadFileResponse>(data, 'UploadFileResponse');
   }
 
   /** POST /v1/query — Query RAG knowledge base */

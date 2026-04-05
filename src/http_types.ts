@@ -85,6 +85,24 @@ export interface RagUploadResponse {
   chunks_count: number;
 }
 
+export interface DocumentQuality {
+  score: number;
+  label: string;
+  word_count: number;
+  line_density: number;
+  avg_line_length: number;
+  paragraph_count: number;
+}
+
+export interface UploadFileResponse {
+  document_id: string;
+  chunks_count: number;
+  indexed_at: string;
+  content_type: string;
+  trace_id: string;
+  quality?: DocumentQuality;
+}
+
 export interface RagSource {
   document_id: string;
   content: string;
