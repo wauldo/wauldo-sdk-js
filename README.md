@@ -28,11 +28,34 @@
 
 ---
 
-## Quickstart (30 seconds)
+## Try it locally (no server needed)
 
 ```bash
 npm install wauldo
 ```
+
+```typescript
+import { MockHttpClient } from 'wauldo';
+
+const client = new MockHttpClient();
+
+// Upload, query, fact-check — all offline
+await client.ragUpload('Refund policy allows returns within 60 days.', 'policy.txt');
+const result = await client.ragQuery('What is the refund policy?');
+console.log(result.answer); // "Mock answer for: What is the refund policy?"
+
+const check = await client.factCheck({
+  text: 'Returns accepted within 30 days.',
+  source_context: 'Refund policy allows returns within 60 days.',
+});
+console.log(check.verdict); // "rejected"
+```
+
+Run the full quickstart: `npx tsx examples/quickstart.ts`
+
+---
+
+## Quickstart with real API
 
 ```typescript
 import { HttpClient } from 'wauldo';
@@ -195,7 +218,9 @@ Free tier (300 req/month): [RapidAPI](https://rapidapi.com/binnewzzin/api/smart-
 
 ## Contributing
 
-PRs welcome. Check the [good first issues](https://github.com/wauldo/wauldo-sdk-js/labels/good%20first%20issue).
+PRs welcome! See [CONTRIBUTING.md](./CONTRIBUTING.md) for setup instructions and guidelines.
+
+Check the [good first issues](https://github.com/wauldo/wauldo-sdk-js/labels/good%20first%20issue) to get started.
 
 ## License
 
