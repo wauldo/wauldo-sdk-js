@@ -327,7 +327,7 @@ export class HttpClient {
    * Verify an LLM output against a source document.
    * Convenience wrapper around factCheck(). Returns a simple safe/unsafe result.
    */
-  async guard(text: string, source: string, mode: string = 'lexical'): Promise<GuardResult> {
+  async guard(text: string, source: string, mode: 'lexical' | 'hybrid' | 'semantic' = 'lexical'): Promise<GuardResult> {
     const result = await this.factCheck({ text, source_context: source, mode });
     const claim = result.claims?.[0];
     return {
