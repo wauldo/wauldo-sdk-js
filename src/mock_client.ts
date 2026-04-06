@@ -21,6 +21,7 @@ import type {
   UploadFileResponse,
   VerifyCitationRequest,
   VerifyCitationResponse,
+  GuardResult,
 } from './http_types.js';
 
 /** Default chat response returned when none is configured */
@@ -200,6 +201,17 @@ export class MockHttpClient {
         evidence: request.source_context,
       }],
       processing_time_ms: 1,
+    };
+  }
+
+  async guard(text: string, source: string, mode: string = 'lexical'): Promise<GuardResult> {
+    this.record('guard', text, source, mode);
+    return {
+      safe: true,
+      verdict: 'verified',
+      action: 'allow',
+      reason: null,
+      confidence: 0.95,
     };
   }
 

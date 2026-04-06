@@ -85,6 +85,7 @@ export type {
   LogLevel,
   RequestOptions,
   ChatClientLike,
+  GuardResult,
   InsightsResponse,
   AnalyticsResponse,
   TrafficSummary,

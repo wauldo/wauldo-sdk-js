@@ -16,6 +16,7 @@ import type {
   FactCheckResponse,
   VerifyCitationRequest,
   VerifyCitationResponse,
+  GuardResult,
   OrchestratorResponse,
   RagQueryResponse,
   RagUploadResponse,
@@ -320,6 +321,22 @@ export class HttpClient {
       this.retryConfig, 'POST', '/v1/verify', request,
     );
     return validateResponse<VerifyCitationResponse>(data, 'VerifyCitationResponse');
+  }
+
+  /**
+   * Verify an LLM output against a source document.
+   * Convenience wrapper around factCheck(). Returns a simple safe/unsafe result.
+   */
+  async guard(text: string, source: string, mode: string = 'lexical'): Promise<GuardResult> {
+    const result = await this.factCheck({ text, source_context: source, mode });
+    const claim = result.claims?.[0];
+    return {
+      safe: claim?.verdict === 'verified',
+      verdict: claim?.verdict ?? 'rejected',
+      action: claim?.action ?? 'block',
+      reason: claim?.reason ?? 'no_claims',
+      confidence: claim?.confidence ?? 0,
+    };
   }
 
   // ── Analytics & Insights endpoints ───────────────────────────────────

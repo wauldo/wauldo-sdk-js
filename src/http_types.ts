@@ -208,6 +208,16 @@ export interface VerifyCitationResponse {
   processing_time_ms: number;
 }
 
+// ── Guard ─────────────────────────────────────────────────────────
+
+export interface GuardResult {
+  safe: boolean;
+  verdict: string;
+  action: string;
+  reason: string | null;
+  confidence: number;
+}
+
 // ── Analytics & Insights ───────────────────────────────────────────────
 
 export interface InsightsResponse {
