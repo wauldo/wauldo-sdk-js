@@ -112,6 +112,21 @@ Wauldo:       "Refunds are processed within 60 days"     ← verified
 
 ## Examples
 
+### Guard — catch hallucinations (2 lines)
+
+```typescript
+const result = await client.guard(
+  'Returns are accepted within 60 days of purchase',
+  'Our return policy allows returns within 14 days.',
+);
+console.log(result.verdict);            // "rejected"
+console.log(result.action);             // "block"
+console.log(result.claims[0]?.reason);  // "numerical_mismatch"
+console.log(guardIsBlocked(result));    // true
+```
+
+Guard verifies any LLM output against source documents. Wrong answers get blocked before they reach your users. Modes: `lexical` (<1ms), `hybrid` (~50ms), `semantic` (~500ms).
+
 ### Upload a PDF and ask questions
 
 ```typescript
