@@ -208,8 +208,9 @@ export interface VerifyCitationResponse {
   processing_time_ms: number;
 }
 
-// ── Guard ─────────────────────────────────────────────────────────
+// ── Guard (Fact-Check) ────────────────────────────────────────────
 
+/** @deprecated Use GuardResponse instead */
 export interface GuardResult {
   safe: boolean;
   verdict: string;
@@ -217,6 +218,41 @@ export interface GuardResult {
   reason: string | null;
   confidence: number;
 }
+
+export interface GuardClaim {
+  text: string;
+  claim_type?: string;
+  supported: boolean;
+  confidence: number;
+  confidence_label?: string;
+  verdict: string;
+  action: string;
+  reason?: string | null;
+  evidence?: string | null;
+}
+
+export interface GuardResponse {
+  verdict: string;
+  action: string;
+  hallucination_rate: number;
+  mode: string;
+  total_claims: number;
+  supported_claims: number;
+  confidence: number;
+  claims: GuardClaim[];
+  mode_warning?: string;
+  processing_time_ms?: number;
+}
+
+export function guardIsSafe(response: GuardResponse): boolean {
+  return response.verdict === 'verified';
+}
+
+export function guardIsBlocked(response: GuardResponse): boolean {
+  return response.action === 'block';
+}
+
+export type GuardMode = 'lexical' | 'hybrid' | 'semantic';
 
 // ── Analytics & Insights ───────────────────────────────────────────────
 

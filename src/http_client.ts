@@ -16,7 +16,8 @@ import type {
   FactCheckResponse,
   VerifyCitationRequest,
   VerifyCitationResponse,
-  GuardResult,
+  GuardMode,
+  GuardResponse,
   OrchestratorResponse,
   RagQueryResponse,
   RagUploadResponse,
@@ -324,19 +325,32 @@ export class HttpClient {
   }
 
   /**
-   * Verify an LLM output against a source document.
-   * Convenience wrapper around factCheck(). Returns a simple safe/unsafe result.
+   * POST /v1/fact-check — Verify text claims against source context.
+   *
+   * Guard is a hallucination firewall: checks whether LLM output is
+   * supported by source documents. Blocks wrong answers before users see them.
+   *
+   * @param text - The LLM-generated text to verify
+   * @param sourceContext - The ground-truth source document(s)
+   * @param mode - "lexical" (<1ms), "hybrid" (~50ms), or "semantic" (~500ms)
+   *
+   * @example
+   * ```typescript
+   * const result = await client.guard(
+   *   'Returns accepted within 60 days',
+   *   'Our return policy: 14 days.',
+   * );
+   * if (guardIsBlocked(result)) {
+   *   console.log('Hallucination caught:', result.claims[0]?.reason);
+   * }
+   * ```
    */
-  async guard(text: string, source: string, mode: 'lexical' | 'hybrid' | 'semantic' = 'lexical'): Promise<GuardResult> {
-    const result = await this.factCheck({ text, source_context: source, mode });
-    const claim = result.claims?.[0];
-    return {
-      safe: claim?.verdict === 'verified',
-      verdict: claim?.verdict ?? 'rejected',
-      action: claim?.action ?? 'block',
-      reason: claim?.reason ?? 'no_claims',
-      confidence: claim?.confidence ?? 0,
-    };
+  async guard(text: string, sourceContext: string, mode: GuardMode = 'lexical'): Promise<GuardResponse> {
+    const data = await fetchWithRetry<GuardResponse>(
+      this.retryConfig, 'POST', '/v1/fact-check',
+      { text, source_context: sourceContext, mode },
+    );
+    return validateResponse<GuardResponse>(data, 'GuardResponse');
   }
 
   // ── Analytics & Insights endpoints ───────────────────────────────────

@@ -21,7 +21,7 @@ import type {
   UploadFileResponse,
   VerifyCitationRequest,
   VerifyCitationResponse,
-  GuardResult,
+  GuardResponse,
 } from './http_types.js';
 
 /** Default chat response returned when none is configured */
@@ -204,14 +204,28 @@ export class MockHttpClient {
     };
   }
 
-  async guard(text: string, source: string, mode: string = 'lexical'): Promise<GuardResult> {
-    this.record('guard', text, source, mode);
+  async guard(text: string, sourceContext: string, mode: 'lexical' | 'hybrid' | 'semantic' = 'lexical'): Promise<GuardResponse> {
+    this.record('guard', text, sourceContext, mode);
     return {
-      safe: true,
       verdict: 'verified',
       action: 'allow',
-      reason: null,
+      hallucination_rate: 0.0,
+      mode,
+      total_claims: 1,
+      supported_claims: 1,
       confidence: 0.95,
+      claims: [{
+        text,
+        claim_type: 'Fact',
+        supported: true,
+        confidence: 0.95,
+        confidence_label: 'high',
+        verdict: 'verified',
+        action: 'allow',
+        reason: null,
+        evidence: sourceContext,
+      }],
+      processing_time_ms: 0,
     };
   }
 
