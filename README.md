@@ -1,30 +1,29 @@
-<h1 align="center">Wauldo TypeScript SDK</h1>
+<div align="center">
 
-<p align="center">
-  <strong>Verified AI answers from your documents — or no answer at all.</strong>
-</p>
+<br />
 
-<p align="center">
-  Most RAG APIs guess. Wauldo verifies.
-</p>
+# 🟦 Wauldo TypeScript SDK
 
-<p align="center">
-  <b>0% hallucination</b> &nbsp;|&nbsp; 83% accuracy &nbsp;|&nbsp; 61 eval tasks &nbsp;|&nbsp; 14 LLMs tested
-</p>
+### Verified RAG for TypeScript — trust score on every answer
 
-<p align="center">
-  <a href="https://npmjs.com/package/wauldo"><img src="https://img.shields.io/npm/v/wauldo.svg" alt="npm" /></a>&nbsp;
-  <a href="https://npmjs.com/package/wauldo"><img src="https://img.shields.io/npm/dm/wauldo.svg" alt="Downloads" /></a>&nbsp;
-  <img src="https://img.shields.io/badge/TypeScript-5.0+-blue.svg" alt="TypeScript" />&nbsp;
-  <img src="https://img.shields.io/badge/License-MIT-green.svg" alt="MIT" />
-</p>
+<br />
 
-<p align="center">
-  <a href="https://wauldo.com/demo">Demo</a> &bull;
-  <a href="https://wauldo.com/docs">Docs</a> &bull;
-  <a href="https://rapidapi.com/binnewzzin/api/smart-rag-api">Free API Key</a> &bull;
-  <a href="https://dev.to/wauldo/how-we-achieved-0-hallucination-rate-in-our-rag-api-with-benchmarks-4g54">Benchmarks</a>
-</p>
+**Your LLM passes demos.**
+**It fails in production.**
+
+One import, two lines — plug Wauldo Guard on top of LangChain / LlamaIndex / Haystack and get a numeric trust_score + verdict (`SAFE` / `CONFLICT` / `UNVERIFIED` / `BLOCK`) on every response.
+
+<br />
+
+[![npm](https://img.shields.io/npm/v/wauldo.svg?style=for-the-badge&label=npm&color=3178c6)](https://www.npmjs.com/package/wauldo)
+[![License: MIT](https://img.shields.io/badge/License-MIT-22c55e?style=for-the-badge)](LICENSE)
+[![Leaderboard](https://img.shields.io/badge/📊_96%25_adversarial-wauldo.com%2Fleaderboard-3b82f6?style=for-the-badge)](https://wauldo.com/leaderboard)
+
+<br />
+
+<sub>TypeScript 5.0+ · MIT · wraps any RAG pipeline · reproducible bench: [wauldo-leaderboard](https://github.com/wauldo/wauldo-leaderboard)</sub>
+
+</div>
 
 ---
 
@@ -230,14 +229,31 @@ Free tier (300 req/month): [RapidAPI](https://rapidapi.com/binnewzzin/api/smart-
 
 ---
 
-[Website](https://wauldo.com) | [Docs](https://wauldo.com/docs) | [Demo](https://wauldo.com/demo) | [Benchmarks](https://dev.to/wauldo/how-we-achieved-0-hallucination-rate-in-our-rag-api-with-benchmarks-4g54)
-
 ## Contributing
 
-PRs welcome! See [CONTRIBUTING.md](./CONTRIBUTING.md) for setup instructions and guidelines.
+PRs welcome! See [CONTRIBUTING.md](./CONTRIBUTING.md) for setup instructions and guidelines. Check the [good first issues](https://github.com/wauldo/wauldo-sdk-js/labels/good%20first%20issue) to get started.
 
-Check the [good first issues](https://github.com/wauldo/wauldo-sdk-js/labels/good%20first%20issue) to get started.
+---
 
-## License
+## 🔗 Related
 
-MIT — see [LICENSE](./LICENSE)
+- **[wauldo.com](https://wauldo.com)** — platform
+- **[wauldo.com/leaderboard](https://wauldo.com/leaderboard)** — live RAG framework bench (6 frameworks, daily refresh)
+- **[wauldo.com/guard](https://wauldo.com/guard)** — verification layer docs
+- **[github.com/wauldo/wauldo-leaderboard](https://github.com/wauldo/wauldo-leaderboard)** — reproducible bench runner, MIT
+- **[github.com/wauldo/wauldo-sdk-python](https://github.com/wauldo/wauldo-sdk-python)** — Python peer SDK
+- **[github.com/wauldo/wauldo-sdk-rust](https://github.com/wauldo/wauldo-sdk-rust)** — Rust peer SDK
+
+---
+
+## 📄 License
+
+MIT — see [LICENSE](./LICENSE).
+
+<div align="center">
+
+<br />
+
+<sub>Built by the Wauldo team. If this changed your mind about your RAG stack, give it a ⭐.</sub>
+
+</div>
