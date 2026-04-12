@@ -87,18 +87,13 @@ Wauldo:       "Refunds are processed within 60 days"     ← verified
 
 ## Examples
 
-### Upload a PDF and ask questions
+### Upload and ask questions
 
 ```typescript
-// Upload — text extraction + quality scoring happens server-side
-const upload = await client.uploadFile(filePath, { title: 'Q3 Contract' });
-console.log(`Extracted ${upload.chunks_count} chunks, quality: ${upload.quality_label}`);
+await client.ragUpload('Our refund policy allows returns within 60 days...', 'policy.txt');
 
-// Query
 const result = await client.ragQuery('What are the payment terms?');
 console.log(`Answer: ${result.answer}`);
-console.log(`Confidence: ${Math.round(result.audit.confidence * 100)}%`);
-console.log(`Grounded: ${result.audit.grounded}`);
 ```
 
 ### Guard — fact-check any LLM output
