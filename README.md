@@ -39,20 +39,18 @@ import { HttpClient } from 'wauldo';
 
 const client = new HttpClient({ baseUrl: 'https://api.wauldo.com', apiKey: 'YOUR_API_KEY' });
 
-// Upload a document
+// Guard — catch hallucinations in 3 lines
+const result = await client.guard(
+  'Returns are accepted within 60 days.',
+  'Our policy allows returns within 14 days.',
+);
+console.log(result.verdict);            // "rejected"
+console.log(result.claims[0]?.reason);  // "numerical_mismatch"
+
+// RAG — upload, ask, verify
 await client.ragUpload('Our refund policy allows returns within 60 days...', 'policy.txt');
-
-// Ask a question — answer is verified against the source
-const result = await client.ragQuery('What is the refund policy?');
-console.log(result.answer);
-console.log(result.sources);
-```
-
-```
-Output:
-Answer: Returns are accepted within 60 days of purchase.
-Sources: policy.txt — "Our refund policy allows returns within 60 days"
-Grounded: true | Confidence: 0.92
+const answer = await client.ragQuery('What is the refund policy?');
+console.log(answer.answer);             // Verified answer with sources
 ```
 
 [Try the demo](https://wauldo.com/demo) | [Get a free API key](https://rapidapi.com/binnewzzin/api/smart-rag-api)
