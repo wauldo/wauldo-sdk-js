@@ -17,7 +17,7 @@ One import, two lines — plug Wauldo Guard on top of LangChain / LlamaIndex / H
 
 [![npm](https://img.shields.io/npm/v/wauldo.svg?style=for-the-badge&label=npm&color=3178c6)](https://www.npmjs.com/package/wauldo)
 [![License: MIT](https://img.shields.io/badge/License-MIT-22c55e?style=for-the-badge)](LICENSE)
-[![Leaderboard](https://img.shields.io/badge/📊_96%25_adversarial-wauldo.com%2Fleaderboard-3b82f6?style=for-the-badge)](https://wauldo.com/leaderboard)
+[![Leaderboard](https://img.shields.io/badge/📊_97%25_adversarial-wauldo.com%2Fleaderboard-3b82f6?style=for-the-badge)](https://wauldo.com/leaderboard)
 
 <br />
 
