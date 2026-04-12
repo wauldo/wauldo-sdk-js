@@ -1,6 +1,6 @@
 {
   "name": "wauldo",
-  "version": "0.7.0",
+  "version": "0.7.2",
   "description": "Official TypeScript SDK for Wauldo — Verified AI answers from your documents",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

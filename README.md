@@ -1,60 +1,38 @@
-<div align="center">
+<h1 align="center">Wauldo TypeScript SDK</h1>
 
-<br />
+<p align="center">
+  <strong>Verified AI answers from your documents — or no answer at all.</strong>
+</p>
 
-# 🟦 Wauldo TypeScript SDK
+<p align="center">
+  Most RAG APIs guess. Wauldo verifies.
+</p>
 
-### Verified RAG for TypeScript — trust score on every answer
+<p align="center">
+  <b>0% hallucination</b> &nbsp;|&nbsp; 83% accuracy &nbsp;|&nbsp; 61 eval tasks &nbsp;|&nbsp; 14 LLMs tested
+</p>
 
-<br />
+<p align="center">
+  <a href="https://npmjs.com/package/wauldo"><img src="https://img.shields.io/npm/v/wauldo.svg" alt="npm" /></a>&nbsp;
+  <a href="https://npmjs.com/package/wauldo"><img src="https://img.shields.io/npm/dm/wauldo.svg" alt="Downloads" /></a>&nbsp;
+  <img src="https://img.shields.io/badge/TypeScript-5.0+-blue.svg" alt="TypeScript" />&nbsp;
+  <img src="https://img.shields.io/badge/License-MIT-green.svg" alt="MIT" />
+</p>
 
-**Your LLM passes demos.**
-**It fails in production.**
-
-One import, two lines — plug Wauldo Guard on top of LangChain / LlamaIndex / Haystack and get a numeric trust_score + verdict (`SAFE` / `CONFLICT` / `UNVERIFIED` / `BLOCK`) on every response.
-
-<br />
-
-[![npm](https://img.shields.io/npm/v/wauldo.svg?style=for-the-badge&label=npm&color=3178c6)](https://www.npmjs.com/package/wauldo)
-[![License: MIT](https://img.shields.io/badge/License-MIT-22c55e?style=for-the-badge)](LICENSE)
-[![Leaderboard](https://img.shields.io/badge/📊_97%25_adversarial-wauldo.com%2Fleaderboard-3b82f6?style=for-the-badge)](https://wauldo.com/leaderboard)
-
-<br />
-
-<sub>TypeScript 5.0+ · MIT · wraps any RAG pipeline · reproducible bench: [wauldo-leaderboard](https://github.com/wauldo/wauldo-leaderboard)</sub>
-
-</div>
+<p align="center">
+  <a href="https://wauldo.com/demo">Demo</a> &bull;
+  <a href="https://wauldo.com/docs">Docs</a> &bull;
+  <a href="https://rapidapi.com/binnewzzin/api/smart-rag-api">Free API Key</a> &bull;
+  <a href="https://dev.to/wauldo/how-we-achieved-0-hallucination-rate-in-our-rag-api-with-benchmarks-4g54">Benchmarks</a>
+</p>
 
 ---
 
-## Try it locally (no server needed)
+## Quickstart (30 seconds)
 
 ```bash
 npm install wauldo
 ```
-
-```typescript
-import { MockHttpClient } from 'wauldo';
-
-const client = new MockHttpClient();
-
-// Upload, query, fact-check — all offline
-await client.ragUpload('Refund policy allows returns within 60 days.', 'policy.txt');
-const result = await client.ragQuery('What is the refund policy?');
-console.log(result.answer); // "Mock answer for: What is the refund policy?"
-
-const check = await client.factCheck({
-  text: 'Returns accepted within 30 days.',
-  source_context: 'Refund policy allows returns within 60 days.',
-});
-console.log(check.verdict); // "rejected"
-```
-
-Run the full quickstart: `npx tsx examples/quickstart.ts`
-
----
-
-## Quickstart with real API
 
 ```typescript
 import { HttpClient } from 'wauldo';
@@ -111,21 +89,6 @@ Wauldo:       "Refunds are processed within 60 days"     ← verified
 
 ## Examples
 
-### Guard — catch hallucinations (2 lines)
-
-```typescript
-const result = await client.guard(
-  'Returns are accepted within 60 days of purchase',
-  'Our return policy allows returns within 14 days.',
-);
-console.log(result.verdict);            // "rejected"
-console.log(result.action);             // "block"
-console.log(result.claims[0]?.reason);  // "numerical_mismatch"
-console.log(guardIsBlocked(result));    // true
-```
-
-Guard verifies any LLM output against source documents. Wrong answers get blocked before they reach your users. Modes: `lexical` (<1ms), `hybrid` (~50ms), `semantic` (~500ms).
-
 ### Upload a PDF and ask questions
 
 ```typescript
@@ -140,14 +103,14 @@ console.log(`Confidence: ${Math.round(result.audit.confidence * 100)}%`);
 console.log(`Grounded: ${result.audit.grounded}`);
 ```
 
-### Fact-check any LLM output
+### Guard — fact-check any LLM output
 
 ```typescript
-const result = await client.factCheck({
-  text: 'Returns are accepted within 60 days.',
-  sourceContext: 'Our policy allows returns within 14 days.',
-  mode: 'lexical',
-});
+const result = await client.guard(
+  'Returns are accepted within 60 days.',
+  'Our policy allows returns within 14 days.',
+  'lexical',
+);
 console.log(result.verdict);          // "rejected"
 console.log(result.action);           // "block"
 console.log(result.claims[0].reason); // "numerical_mismatch"
@@ -186,10 +149,7 @@ const followUp = await conv.say('Give me an example');
 
 - **Pre-generation fact extraction** — numbers, dates, limits injected as constraints
 - **Post-generation grounding check** — every answer verified against sources
-- **Citation validation** — detects phantom references
-- **Analytics & Insights** — track token savings, cache performance, cost per hour, and per-tenant traffic
-- **Guard method** — one-call hallucination firewall (`client.guard(text, source)` → safe/unsafe)
-- **Fact-check API** — verify any claim against any source (3 modes)
+- **Guard API** — verify any claim against any source (3 modes: lexical, hybrid, semantic)
 - **Native PDF/DOCX upload** — server-side extraction with quality scoring
 - **Smart model routing** — auto-selects cheapest model that meets quality
 - **OpenAI-compatible** — swap your `baseUrl`, keep your existing code
@@ -229,31 +189,12 @@ Free tier (300 req/month): [RapidAPI](https://rapidapi.com/binnewzzin/api/smart-
 
 ---
 
+[Website](https://wauldo.com) | [Docs](https://wauldo.com/docs) | [Demo](https://wauldo.com/demo) | [Benchmarks](https://dev.to/wauldo/how-we-achieved-0-hallucination-rate-in-our-rag-api-with-benchmarks-4g54)
+
 ## Contributing
 
-PRs welcome! See [CONTRIBUTING.md](./CONTRIBUTING.md) for setup instructions and guidelines. Check the [good first issues](https://github.com/wauldo/wauldo-sdk-js/labels/good%20first%20issue) to get started.
+PRs welcome. Check the [good first issues](https://github.com/wauldo/wauldo-sdk-js/labels/good%20first%20issue).
 
----
+## License
 
-## 🔗 Related
-
-- **[wauldo.com](https://wauldo.com)** — platform
-- **[wauldo.com/leaderboard](https://wauldo.com/leaderboard)** — live RAG framework bench (6 frameworks, daily refresh)
-- **[wauldo.com/guard](https://wauldo.com/guard)** — verification layer docs
-- **[github.com/wauldo/wauldo-leaderboard](https://github.com/wauldo/wauldo-leaderboard)** — reproducible bench runner, MIT
-- **[github.com/wauldo/wauldo-sdk-python](https://github.com/wauldo/wauldo-sdk-python)** — Python peer SDK
-- **[github.com/wauldo/wauldo-sdk-rust](https://github.com/wauldo/wauldo-sdk-rust)** — Rust peer SDK
-
----
-
-## 📄 License
-
-MIT — see [LICENSE](./LICENSE).
-
-<div align="center">
-
-<br />
-
-<sub>Built by the Wauldo team. If this changed your mind about your RAG stack, give it a ⭐.</sub>
-
-</div>
+MIT — see [LICENSE](./LICENSE)
